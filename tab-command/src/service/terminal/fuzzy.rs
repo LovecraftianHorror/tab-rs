@@ -19,8 +19,8 @@ use crossterm::{
 };
 use crossterm::{event::Event, event::EventStream, event::KeyCode};
 use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
+use lifeline::ReceiverExt;
 use tab_api::tab::normalize_name;
-use tokio::{stream::Stream, stream::StreamExt, sync::watch};
 
 /// Rows reserved by the UI for non-match items
 const RESERVED_ROWS: usize = 2;
@@ -55,33 +55,25 @@ impl Service for FuzzyFinderService {
         };
 
         let _filter_state = {
-            let rx = bus.rx::<Option<FuzzyTabsState>>()?.into_inner();
-            let rx_query = bus.rx::<FuzzyQueryState>()?.into_inner();
+            let rx = bus.rx::<Option<FuzzyTabsState>>()?;
+            let rx_query = bus.rx::<FuzzyQueryState>()?;
             let tx = bus.tx::<FuzzyMatchState>()?;
             Self::try_task("filter_state", Self::filter_state(rx, rx_query, tx))
         };
 
         let _select_state = {
-            let rx = bus
-                .rx::<FuzzyEvent>()?
-                .into_inner()
-                .filter(Result::is_ok)
-                .map(Result::unwrap);
-            let rx_matches = bus.rx::<FuzzyMatchState>()?.into_inner();
+            let rx = bus.rx::<FuzzyEvent>()?;
+            let rx_matches = bus.rx::<FuzzyMatchState>()?;
             let tx = bus.tx::<Option<FuzzySelectState>>()?;
 
             Self::try_task("select_state", Self::select_state(rx, rx_matches, tx))
         };
 
         let _output_state = {
-            let rx_query = bus.rx::<FuzzyQueryState>()?.into_inner();
-            let rx_match = bus.rx::<FuzzyMatchState>()?.into_inner();
+            let rx_query = bus.rx::<FuzzyQueryState>()?;
+            let rx_match = bus.rx::<FuzzyMatchState>()?;
             let rx_select = bus.rx::<Option<FuzzySelectState>>()?;
-            let rx_event = bus
-                .rx::<FuzzyEvent>()?
-                .into_inner()
-                .filter(|elem| elem.is_ok())
-                .map(|elem| elem.unwrap());
+            let rx_event = bus.rx::<FuzzyEvent>()?;
 
             let tx = bus.tx::<FuzzyOutputEvent>()?;
             Self::try_task(
@@ -96,12 +88,8 @@ impl Service for FuzzyFinderService {
         };
 
         let _select = {
-            let rx = bus
-                .rx::<FuzzyEvent>()?
-                .into_inner()
-                .filter(Result::is_ok)
-                .map(Result::unwrap);
-            let rx_selection = bus.rx::<Option<FuzzySelectState>>()?.into_inner();
+            let rx = bus.rx::<FuzzyEvent>()?;
+            let rx_selection = bus.rx::<Option<FuzzySelectState>>()?;
             let tx = bus.tx::<FuzzySelection>()?;
             let tx_shutdown = bus.tx::<FuzzyShutdown>()?;
 
@@ -132,6 +120,8 @@ impl FuzzyFinderService {
         mut tx_event: impl Sender<FuzzyEvent>,
         mut tx_shutdown: impl Sender<FuzzyShutdown>,
     ) -> anyhow::Result<()> {
+        use futures_util::stream::StreamExt;
+
         let mut reader = EventStream::new();
 
         let (cols, rows) = terminal_size()?;
@@ -262,8 +252,8 @@ impl FuzzyFinderService {
     }
 
     async fn filter_state(
-        rx: watch::Receiver<Option<FuzzyTabsState>>,
-        rx_query: watch::Receiver<FuzzyQueryState>,
+        rx: impl ReceiverExt<Option<FuzzyTabsState>>,
+        rx_query: impl ReceiverExt<FuzzyQueryState>,
         mut tx: impl Sender<FuzzyMatchState>,
     ) -> anyhow::Result<()> {
         let matcher = SkimMatcherV2::default().ignore_case();
@@ -275,7 +265,7 @@ impl FuzzyFinderService {
         let mut entries: Vec<Arc<TabEntry>> = vec![];
         let mut query = None;
 
-        while let Some(event) = rx.next().await {
+        while let Some(event) = rx.recv().await {
             match event {
                 FilterEvent::Tabs(state) => {
                     if let Some(tabs) = state {
@@ -378,8 +368,8 @@ impl FuzzyFinderService {
     }
 
     async fn select_state(
-        rx: impl Stream<Item = FuzzyEvent> + Unpin,
-        rx_matches: impl Stream<Item = FuzzyMatchState> + Unpin,
+        rx: impl ReceiverExt<FuzzyEvent> + Unpin,
+        rx_matches: impl ReceiverExt<FuzzyMatchState> + Unpin,
         mut tx: impl Sender<Option<FuzzySelectState>>,
     ) -> anyhow::Result<()> {
         enum Recv {
@@ -395,7 +385,7 @@ impl FuzzyFinderService {
         let mut matches: Vec<FuzzyMatch> = Vec::new();
         let mut terminal_height = terminal_size()?.1 as usize;
 
-        while let Some(msg) = rx.next().await {
+        while let Some(msg) = rx.recv().await {
             match msg {
                 Recv::Event(event) => match event {
                     FuzzyEvent::MoveUp => {
@@ -448,8 +438,8 @@ impl FuzzyFinderService {
     }
 
     async fn send_selected(
-        rx: impl Stream<Item = FuzzyEvent> + Unpin,
-        rx_selection: impl Stream<Item = Option<FuzzySelectState>> + Unpin,
+        rx: impl ReceiverExt<FuzzyEvent> + Unpin,
+        rx_selection: impl ReceiverExt<Option<FuzzySelectState>> + Unpin,
         mut tx: impl Sender<FuzzySelection>,
         mut tx_shutdown: impl Sender<FuzzyShutdown>,
         output: Lifeline,
@@ -466,7 +456,7 @@ impl FuzzyFinderService {
 
         let mut selection: Option<FuzzySelectState> = None;
 
-        while let Some(message) = rx.next().await {
+        while let Some(message) = rx.recv().await {
             match message {
                 Recv::Event(FuzzyEvent::Enter) => {
                     let name = selection.map(|state| state.tab.name.clone());
@@ -496,10 +486,10 @@ impl FuzzyFinderService {
     }
 
     async fn output_state(
-        rx_query: impl Stream<Item = FuzzyQueryState> + Unpin,
-        rx_match: impl Stream<Item = FuzzyMatchState> + Unpin,
-        rx_select: impl Stream<Item = Option<FuzzySelectState>> + Unpin,
-        rx_event: impl Stream<Item = FuzzyEvent> + Unpin,
+        rx_query: impl ReceiverExt<FuzzyQueryState> + Unpin,
+        rx_match: impl ReceiverExt<FuzzyMatchState> + Unpin,
+        rx_select: impl ReceiverExt<Option<FuzzySelectState>> + Unpin,
+        rx_event: impl ReceiverExt<FuzzyEvent> + Unpin,
         mut tx_state: impl Sender<FuzzyOutputEvent>,
     ) -> anyhow::Result<()> {
         let mut query_state = Arc::new(FuzzyQueryState::default());
@@ -514,7 +504,7 @@ impl FuzzyFinderService {
             .merge(rx_select.map(|s| OutputRecv::Select(s)))
             .merge(rx_event.map(|s| OutputRecv::Event(s)));
 
-        while let Some(msg) = rx.next().await {
+        while let Some(msg) = rx.recv().await {
             match msg {
                 OutputRecv::Query(query) => {
                     query_state = Arc::new(query);

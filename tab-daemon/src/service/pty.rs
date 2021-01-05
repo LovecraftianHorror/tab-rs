@@ -48,7 +48,7 @@ impl Service for PtyService {
                             tx_daemon.send(PtySend::Stopped).await?;
 
                             // this sleep is not visible to the user
-                            time::delay_for(Duration::from_millis(500)).await;
+                            time::sleep(Duration::from_millis(500)).await;
                             tx_shutdown.send(PtyShutdown {}).await?;
                             break;
                         }

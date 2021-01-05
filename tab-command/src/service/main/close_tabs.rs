@@ -29,7 +29,7 @@ impl Service for MainCloseTabsService {
                     let state = await_state(&mut rx_active).await?;
                     let exit_code = Self::close_tabs(tabs, state, &mut tx_request).await?;
 
-                    time::delay_for(Duration::from_millis(5)).await;
+                    time::sleep(Duration::from_millis(5)).await;
                     tx_shutdown.send(MainShutdown(exit_code)).await?;
                     break;
                 }

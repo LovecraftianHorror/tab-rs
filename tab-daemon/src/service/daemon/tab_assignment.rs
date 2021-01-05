@@ -58,7 +58,7 @@ impl Service for TabAssignmentService {
                         }
 
                         retracted = retraction.retract_if_expired(Duration::from_millis(25));
-                        time::delay_for(Duration::from_millis(5)).await;
+                        time::sleep(Duration::from_millis(5)).await;
                     }
 
                     let metadata = retracted.unwrap();

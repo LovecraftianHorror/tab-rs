@@ -177,7 +177,7 @@ impl CliBus {
                     info!("Daemon receieved a global shutdown.");
                     tx.send(TabRecv::TerminateAll).await?;
                     tx_listener_shutdown.send(ListenerShutdown {}).await?;
-                    time::delay_for(Duration::from_millis(50)).await;
+                    time::sleep(Duration::from_millis(50)).await;
                 }
                 CliSend::DisconnectTab(id) => {
                     let message = TabRecv::Retask(id, None);

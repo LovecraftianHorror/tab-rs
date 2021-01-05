@@ -83,7 +83,21 @@ dependencies = [
  "futures-util",
  "log",
  "pin-project 0.4.27",
- "tokio",
+ "tokio 0.2.24",
+ "tungstenite",
+]
+
+[[package]]
+name = "async-tungstenite"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39eca8dd578b18e557361e50ca767df55c5e62f690a5e53868c3c7a8123145b7"
+dependencies = [
+ "futures-io",
+ "futures-util",
+ "log",
+ "pin-project 1.0.2",
+ "tokio 0.3.6",
  "tungstenite",
 ]
 
@@ -173,6 +187,12 @@ name = "bytes"
 version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e4cec68f03f32e44924783795810fa50a7035d8c8ebe78580ad7e6c703fba38"
+
+[[package]]
+name = "bytes"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0dcbc35f504eb6fc275a6d20e4ebcda18cf50d40ba6fabff8c711fa16cb3b16"
 
 [[package]]
 name = "cfg-if"
@@ -738,8 +758,7 @@ checksum = "1482821306169ec4d07f6aca392a4681f66c75c9918aa49641a2595db64053cb"
 [[package]]
 name = "lifeline"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0de1b2d77a2fcdc810db29bd989ae18882e6b157370a56f4c778d8d6b1aca01e"
+source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-tokio-0.3#35d4bf79551e4a09cae4017057f975928a6c2081"
 dependencies = [
  "anyhow",
  "arc-swap",
@@ -750,7 +769,7 @@ dependencies = [
  "pin-project 0.4.27",
  "regex",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
 ]
 
 [[package]]
@@ -852,29 +871,6 @@ dependencies = [
  "miow 0.3.6",
  "ntapi",
  "winapi 0.3.9",
-]
-
-[[package]]
-name = "mio-named-pipes"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0840c1c50fd55e521b247f949c241c9997709f23bd7f023b9762cd561e935656"
-dependencies = [
- "log",
- "mio 0.6.23",
- "miow 0.3.6",
- "winapi 0.3.9",
-]
-
-[[package]]
-name = "mio-uds"
-version = "0.6.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "afcb699eb26d4332647cc848492bbc15eafb26f08d0304550d5aa1f612e066f0"
-dependencies = [
- "iovec",
- "libc",
- "mio 0.6.23",
 ]
 
 [[package]]
@@ -1060,6 +1056,12 @@ name = "pin-project-lite"
 version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c917123afa01924fc84bb20c4c03f004d9c38e5127e3c039bbf7f4b9c76a2f6b"
+
+[[package]]
+name = "pin-project-lite"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b063f57ec186e6140e2b8b6921e5f1bd89c7356dda5b33acc5401203ca6131c"
 
 [[package]]
 name = "pin-utils"
@@ -1525,7 +1527,7 @@ dependencies = [
  "tab-daemon 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-pty 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tempfile",
- "tokio",
+ "tokio 0.3.6",
  "tokio-test",
  "toml_edit",
  "which",
@@ -1544,7 +1546,7 @@ dependencies = [
  "snailquote",
  "sysinfo",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
 ]
 
 [[package]]
@@ -1573,6 +1575,7 @@ dependencies = [
  "clap",
  "crossterm",
  "dirs",
+ "futures-util",
  "fuzzy-matcher",
  "lifeline",
  "log",
@@ -1585,7 +1588,7 @@ dependencies = [
  "tab-api 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
  "tokio-test",
  "typed-builder",
 ]
@@ -1620,7 +1623,7 @@ version = "0.5.4"
 dependencies = [
  "anyhow",
  "async-trait",
- "async-tungstenite",
+ "async-tungstenite 0.8.0",
  "base64 0.13.0",
  "dirs",
  "http",
@@ -1633,7 +1636,7 @@ dependencies = [
  "tab-api 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
  "tokio-io",
  "tokio-test",
  "tungstenite",
@@ -1708,7 +1711,7 @@ dependencies = [
  "tab-pty-process 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
  "tokio-io",
 ]
 
@@ -1719,10 +1722,10 @@ dependencies = [
  "async-trait",
  "bytes 0.4.12",
  "errno",
- "futures 0.3.8",
  "libc",
  "mio 0.6.23",
- "tokio",
+ "thiserror",
+ "tokio 0.3.6",
 ]
 
 [[package]]
@@ -1744,14 +1747,14 @@ name = "tab-websocket"
 version = "0.5.0"
 dependencies = [
  "anyhow",
- "async-tungstenite",
+ "async-tungstenite 0.10.0",
  "bincode",
  "futures 0.3.8",
  "lifeline",
  "log",
  "serde",
  "thiserror",
- "tokio",
+ "tokio 0.3.6",
  "tokio-test",
  "tungstenite",
 ]
@@ -1891,13 +1894,26 @@ dependencies = [
  "futures-core",
  "iovec",
  "lazy_static",
+ "mio 0.6.23",
+ "pin-project-lite 0.1.11",
+ "slab",
+]
+
+[[package]]
+name = "tokio"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "720ba21c25078711bf456d607987d95bce90f7c3bea5abe1db587862e7a1e87c"
+dependencies = [
+ "autocfg",
+ "bytes 0.6.0",
+ "futures-core",
  "libc",
  "memchr",
- "mio 0.6.23",
- "mio-named-pipes",
- "mio-uds",
+ "mio 0.7.7",
  "num_cpus",
- "pin-project-lite",
+ "once_cell",
+ "pin-project-lite 0.2.0",
  "signal-hook-registry",
  "slab",
  "tokio-macros",
@@ -1917,9 +1933,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "0.2.6"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e44da00bfc73a25f814cd8d7e57a68a5c31b74b3152a0a1d1f590c97ed06265a"
+checksum = "46dfffa59fc3c8aad216ed61bdc2c263d2b9d87a9c8ac9de0c11a813e51b6db7"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1934,7 +1950,7 @@ checksum = "ed0049c119b6d505c4447f5c64873636c7af6c75ab0d45fd9f618d82acb8016d"
 dependencies = [
  "bytes 0.5.6",
  "futures-core",
- "tokio",
+ "tokio 0.2.24",
 ]
 
 [[package]]

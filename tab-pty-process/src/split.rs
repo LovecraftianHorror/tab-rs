@@ -8,44 +8,61 @@
 //! to implement the splitting ourselves in order to be able to implement
 //! AsRawFd for the split types.
 
-use futures::{lock::BiLock, ready};
-use std::io::{self};
+use std::{
+    io::{self},
+    sync::Arc,
+};
 use std::{
     os::unix::io::{AsRawFd, RawFd},
     task::{Context, Poll},
 };
-use tokio::io::{AsyncRead, AsyncWrite};
+use tokio::{
+    io::{AsyncRead, AsyncWrite},
+    sync::Mutex,
+};
 
-use crate::{AsAsyncPtyFd, AsyncPtyMaster};
+use crate::{ready, AsAsyncPtyFd, AsyncPtyMaster};
 
 pub fn split(master: AsyncPtyMaster) -> (AsyncPtyMasterReadHalf, AsyncPtyMasterWriteHalf) {
-    let (a, b) = BiLock::new(master);
+    let arc = Arc::new(Mutex::new(master));
     (
-        AsyncPtyMasterReadHalf { handle: a },
-        AsyncPtyMasterWriteHalf { handle: b },
+        AsyncPtyMasterReadHalf {
+            handle: arc.clone(),
+        },
+        AsyncPtyMasterWriteHalf { handle: arc },
     )
 }
 
 /// Read half of a AsyncPtyMaster, created with AsyncPtyMaster::split.
 pub struct AsyncPtyMasterReadHalf {
-    handle: BiLock<AsyncPtyMaster>,
+    handle: Arc<Mutex<AsyncPtyMaster>>,
 }
 
 /// Write half of a AsyncPtyMaster, created with AsyncPtyMaster::split.
 pub struct AsyncPtyMasterWriteHalf {
-    handle: BiLock<AsyncPtyMaster>,
+    handle: Arc<Mutex<AsyncPtyMaster>>,
+}
+
+#[macro_export]
+macro_rules! poll_lock {
+    ($e:expr $(,)?) => {
+        match $e {
+            Ok(t) => t,
+            Err(e) => return std::task::Poll::Pending,
+        }
+    };
 }
 
 impl AsAsyncPtyFd for AsyncPtyMasterReadHalf {
     fn as_async_pty_fd(&self, cx: &mut Context<'_>) -> Poll<RawFd> {
-        let l = ready!(self.handle.poll_lock(cx));
+        let l = self.handle.try_lock(cx);
         Poll::Ready(l.as_raw_fd())
     }
 }
 
 impl AsAsyncPtyFd for &AsyncPtyMasterReadHalf {
     fn as_async_pty_fd(&self, cx: &mut Context<'_>) -> Poll<RawFd> {
-        let l = ready!(self.handle.poll_lock(cx));
+        let l = ready!(self.handle.try_lock(cx));
         Poll::Ready(l.as_raw_fd())
     }
 }

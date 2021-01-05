@@ -83,7 +83,7 @@ impl SelectTabService {
 
             // if we quit too early, the carrier is cancelled and our message doesn't get through.
             // this sleep is not visible to the user, as the outer terminal session will emit new stdout
-            time::delay_for(Duration::from_millis(250)).await;
+            time::sleep(Duration::from_millis(250)).await;
 
             tx_shutdown.send(TabShutdown {}).await?;
             return Ok(());

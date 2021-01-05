@@ -35,8 +35,7 @@ pub fn command_main(args: ArgMatches, tab_version: &'static str) -> anyhow::Resu
 
     info!("tab-command runtime starting");
 
-    let mut runtime = tokio::runtime::Builder::new()
-        .threaded_scheduler()
+    let mut runtime = tokio::runtime::Builder::new_multi_thread()
         .enable_io()
         .enable_time()
         .build()

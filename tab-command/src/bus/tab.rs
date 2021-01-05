@@ -208,7 +208,7 @@ impl CarryFrom<MainBus> for TabBus {
                             // if we terminate immediately, there could be terminal I/O going on.
                             // example:
                             //   05:39:38 [ERROR] ERR: TerminalEchoService/stdout: task was cancelled
-                            time::delay_for(Duration::from_millis(25)).await;
+                            time::sleep(Duration::from_millis(25)).await;
 
                             tx_shutdown
                                 .send(MainShutdown(0))

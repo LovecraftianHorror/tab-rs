@@ -64,7 +64,7 @@ pub async fn launch_daemon() -> anyhow::Result<DaemonConfig> {
             }
         }
 
-        time::delay_for(Duration::from_millis(50)).await;
+        time::sleep(Duration::from_millis(50)).await;
         if Instant::now().duration_since(start_wait) > timeout_duration {
             return Err(anyhow::Error::msg("timeout while waiting for tab daemon"));
         }

@@ -79,7 +79,7 @@ async fn forward_stdin(
             break;
         }
 
-        time::delay_for(Duration::from_micros(150)).await;
+        time::sleep(Duration::from_micros(150)).await;
     }
 
     Ok(())

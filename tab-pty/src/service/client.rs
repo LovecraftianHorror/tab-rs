@@ -157,7 +157,7 @@ impl ClientService {
                 PtyWebsocketRequest::Terminate => {
                     // in case we somehow get a pty termination request, but don't have a session running,
                     // send a main shutdown message
-                    time::delay_for(Duration::from_millis(2000)).await;
+                    time::sleep(Duration::from_millis(2000)).await;
                     tx.send(PtyWebsocketResponse::Stopped).await.ok();
                     tx_shutdown.send(MainShutdown {}).await?;
                 }
@@ -239,7 +239,7 @@ impl ClientSessionService {
                     // The shell should shut down, and emit a shutdown message.
                     // If it doesn't within a reasonable time,
                     //   we'll forcefully kill it.
-                    time::delay_for(Duration::from_millis(1000)).await;
+                    time::sleep(Duration::from_millis(1000)).await;
                     warn!("Shell process did not shut down within the 1 second timeout.");
                     tx_websocket.send(PtyWebsocketResponse::Stopped).await?;
                     tx_shutdown.send(PtyShutdown {}).await?;
@@ -267,7 +267,7 @@ impl ClientSessionService {
                     tx.send(PtyWebsocketResponse::Stopped).await?;
 
                     // this sleep is not visible to the user
-                    time::delay_for(Duration::from_millis(100)).await;
+                    time::sleep(Duration::from_millis(100)).await;
                     tx_shutdown.send(PtyShutdown {}).await?;
                 }
             }
@@ -413,7 +413,7 @@ mod tests {
         );
 
         // wait for a total of 2000ms + 10ms.
-        time::delay_for(Duration::from_millis(110)).await;
+        time::sleep(Duration::from_millis(110)).await;
 
         assert_completes!(async {
             let msg = rx.recv().await;
@@ -528,7 +528,7 @@ mod client_session_tests {
             rx_shutdown.recv().await;
         });
 
-        time::delay_for(Duration::from_millis(1000)).await;
+        time::sleep(Duration::from_millis(1000)).await;
 
         assert_completes!(async {
             let msg = rx_websocket.recv().await;
@@ -593,7 +593,7 @@ mod client_session_tests {
             90
         );
 
-        time::delay_for(Duration::from_millis(20)).await;
+        time::sleep(Duration::from_millis(20)).await;
 
         assert_completes!(
             async {
