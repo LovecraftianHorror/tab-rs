@@ -19,7 +19,6 @@ use crossterm::{
 };
 use crossterm::{event::Event, event::EventStream, event::KeyCode};
 use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
-use lifeline::ReceiverExt;
 use tab_api::tab::normalize_name;
 
 /// Rows reserved by the UI for non-match items
@@ -117,8 +116,8 @@ enum FilterEvent {
 
 impl FuzzyFinderService {
     async fn input(
-        mut tx_event: impl Sender<FuzzyEvent>,
-        mut tx_shutdown: impl Sender<FuzzyShutdown>,
+        mut tx_event: impl Sink<Item = FuzzyEvent> + Unpin,
+        mut tx_shutdown: impl Sink<Item = FuzzyShutdown> + Unpin,
     ) -> anyhow::Result<()> {
         use futures_util::stream::StreamExt;
 
@@ -208,8 +207,8 @@ impl FuzzyFinderService {
     }
 
     async fn query_state(
-        mut rx: impl Receiver<FuzzyEvent>,
-        mut tx: impl Sender<FuzzyQueryState>,
+        mut rx: impl Stream<Item = FuzzyEvent> + Unpin,
+        mut tx: impl Sink<Item = FuzzyQueryState> + Unpin,
     ) -> anyhow::Result<()> {
         let mut query = "".to_string();
         let mut index = 0;
@@ -252,9 +251,9 @@ impl FuzzyFinderService {
     }
 
     async fn filter_state(
-        rx: impl ReceiverExt<Option<FuzzyTabsState>>,
-        rx_query: impl ReceiverExt<FuzzyQueryState>,
-        mut tx: impl Sender<FuzzyMatchState>,
+        rx: impl Stream<Item = Option<FuzzyTabsState>> + Unpin,
+        rx_query: impl Stream<Item = FuzzyQueryState> + Unpin,
+        mut tx: impl Sink<Item = FuzzyMatchState> + Unpin,
     ) -> anyhow::Result<()> {
         let matcher = SkimMatcherV2::default().ignore_case();
 
@@ -368,9 +367,9 @@ impl FuzzyFinderService {
     }
 
     async fn select_state(
-        rx: impl ReceiverExt<FuzzyEvent> + Unpin,
-        rx_matches: impl ReceiverExt<FuzzyMatchState> + Unpin,
-        mut tx: impl Sender<Option<FuzzySelectState>>,
+        rx: impl Stream<Item = FuzzyEvent> + Unpin,
+        rx_matches: impl Stream<Item = FuzzyMatchState> + Unpin,
+        mut tx: impl Sink<Item = Option<FuzzySelectState>> + Unpin,
     ) -> anyhow::Result<()> {
         enum Recv {
             Event(FuzzyEvent),
@@ -438,10 +437,10 @@ impl FuzzyFinderService {
     }
 
     async fn send_selected(
-        rx: impl ReceiverExt<FuzzyEvent> + Unpin,
-        rx_selection: impl ReceiverExt<Option<FuzzySelectState>> + Unpin,
-        mut tx: impl Sender<FuzzySelection>,
-        mut tx_shutdown: impl Sender<FuzzyShutdown>,
+        rx: impl Stream<Item = FuzzyEvent> + Unpin,
+        rx_selection: impl Stream<Item = Option<FuzzySelectState>> + Unpin,
+        mut tx: impl Sink<Item = FuzzySelection> + Unpin,
+        mut tx_shutdown: impl Sink<Item = FuzzyShutdown> + Unpin,
         output: Lifeline,
     ) -> anyhow::Result<()> {
         #[derive(Debug)]
@@ -486,11 +485,11 @@ impl FuzzyFinderService {
     }
 
     async fn output_state(
-        rx_query: impl ReceiverExt<FuzzyQueryState> + Unpin,
-        rx_match: impl ReceiverExt<FuzzyMatchState> + Unpin,
-        rx_select: impl ReceiverExt<Option<FuzzySelectState>> + Unpin,
-        rx_event: impl ReceiverExt<FuzzyEvent> + Unpin,
-        mut tx_state: impl Sender<FuzzyOutputEvent>,
+        rx_query: impl Stream<Item = FuzzyQueryState> + Unpin,
+        rx_match: impl Stream<Item = FuzzyMatchState> + Unpin,
+        rx_select: impl Stream<Item = Option<FuzzySelectState>> + Unpin,
+        rx_event: impl Stream<Item = FuzzyEvent> + Unpin,
+        mut tx_state: impl Sink<Item = FuzzyOutputEvent> + Unpin,
     ) -> anyhow::Result<()> {
         let mut query_state = Arc::new(FuzzyQueryState::default());
         let mut match_state = Arc::new(vec![]);
@@ -557,7 +556,7 @@ impl FuzzyFinderService {
         Ok(())
     }
 
-    async fn output(mut rx: impl Receiver<FuzzyOutputEvent>) -> anyhow::Result<()> {
+    async fn output(mut rx: impl Stream<Item = FuzzyOutputEvent> + Unpin) -> anyhow::Result<()> {
         let mut stdout = std::io::stdout();
 
         while let Some(state) = rx.recv().await {

@@ -37,10 +37,11 @@ dirs = "3.0"
 which = "4.0"
 
 [dev-dependencies]
-lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-tokio-0.3" }
+lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
+postage = { git = "https://github.com/austinjones/postage-rs.git", branch = "main" }
 strip-ansi-escapes = "0.1.0"
 tokio-test = "0.2.1"
-tokio = { version = "0.3", features = ["process", "time", "rt-multi-thread"] } 
+tokio = { version = "1.0", features = ["process", "time", "rt-multi-thread"] } 
 insta = "0.16"
 assert_cmd = "1.0"
 log = "0.4"

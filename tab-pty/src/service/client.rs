@@ -3,6 +3,7 @@ use crate::prelude::*;
 
 use super::pty::PtyService;
 use lifeline::dyn_bus::DynBus;
+use postage::{Sink, Stream};
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
@@ -49,9 +50,9 @@ impl Service for ClientService {
 
 impl ClientService {
     async fn run(
-        mut rx: impl Receiver<PtyWebsocketRequest>,
-        mut tx: impl Sender<PtyWebsocketResponse> + Clone + Send + 'static,
-        mut tx_shutdown: impl Sender<MainShutdown>,
+        mut rx: impl Stream<Item = PtyWebsocketRequest> + Unpin,
+        mut tx: impl Sink<Item = PtyWebsocketResponse> + Clone + Unpin + Send + 'static,
+        mut tx_shutdown: impl Sink<Item = MainShutdown> + Unpin,
         pty_bus: PtyBus,
     ) -> anyhow::Result<()> {
         // TODO: handle ptyshutdown here.
@@ -214,10 +215,10 @@ impl Service for ClientSessionService {
 
 impl ClientSessionService {
     async fn input(
-        mut rx: impl Receiver<PtyWebsocketRequest>,
-        mut tx_pty: impl Sender<PtyRequest>,
-        mut tx_websocket: impl Sender<PtyWebsocketResponse>,
-        mut tx_shutdown: impl Sender<PtyShutdown>,
+        mut rx: impl Stream<Item = PtyWebsocketRequest> + Unpin,
+        mut tx_pty: impl Sink<Item = PtyRequest> + Unpin,
+        mut tx_websocket: impl Sink<Item = PtyWebsocketResponse> + Unpin,
+        mut tx_shutdown: impl Sink<Item = PtyShutdown> + Unpin,
     ) -> anyhow::Result<()> {
         while let Some(request) = rx.recv().await {
             match request {
@@ -252,9 +253,9 @@ impl ClientSessionService {
     }
 
     async fn output(
-        mut rx: impl Receiver<PtyResponse>,
-        mut tx: impl Sender<PtyWebsocketResponse>,
-        mut tx_shutdown: impl Sender<PtyShutdown>,
+        mut rx: impl Stream<Item = PtyResponse> + Unpin,
+        mut tx: impl Sink<Item = PtyWebsocketResponse> + Unpin,
+        mut tx_shutdown: impl Sink<Item = PtyShutdown> + Unpin,
     ) -> anyhow::Result<()> {
         while let Some(msg) = rx.recv().await {
             match msg {
@@ -345,6 +346,7 @@ mod tests {
     use std::{collections::HashMap, time::Duration};
 
     use lifeline::{assert_completes, assert_times_out};
+    use postage::{Sink, Stream};
     use tab_api::{
         pty::{PtyWebsocketRequest, PtyWebsocketResponse},
         tab::TabId,
@@ -432,6 +434,7 @@ mod tests {
 #[cfg(test)]
 mod client_session_tests {
     use lifeline::{assert_completes, assert_times_out, dyn_bus::DynBus};
+    use postage::{Sink, Stream};
     use tab_api::{
         chunk::InputChunk, chunk::OutputChunk, pty::PtyWebsocketRequest, pty::PtyWebsocketResponse,
     };

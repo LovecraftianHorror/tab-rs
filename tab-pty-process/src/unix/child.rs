@@ -1,15 +1,14 @@
 use std::{io, process::ExitStatus};
 
-use tokio::process;
-
 use crate::Child;
 use async_trait::async_trait;
+use tokio::process::Child as TokioChild;
 
 /// A child process that can be interacted with through a pseudo-TTY.
-pub struct UnixPtyChild(process::Child);
+pub struct UnixPtyChild(TokioChild);
 
 impl UnixPtyChild {
-    fn new(inner: process::Child) -> Self {
+    pub fn new(inner: TokioChild) -> Self {
         Self(inner)
     }
 
@@ -22,10 +21,10 @@ impl UnixPtyChild {
 #[async_trait]
 impl Child for UnixPtyChild {
     async fn wait(mut self) -> io::Result<ExitStatus> {
-        process::Child::wait(&mut self.0).await
+        self.0.wait().await
     }
 
     async fn kill(&mut self) -> io::Result<()> {
-        process::Child::kill(&mut self.0).await
+        self.0.kill().await
     }
 }

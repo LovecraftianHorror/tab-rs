@@ -1,4 +1,4 @@
-mod unix;
+pub mod unix;
 
 use std::{io, process::ExitStatus};
 
@@ -13,8 +13,18 @@ pub enum PtySystemError {
 }
 
 pub struct Size {
-    pub width: u16,
-    pub height: u16,
+    pub cols: u16,
+    pub rows: u16,
+}
+
+pub struct PtySystemOptions {
+    pub raw_mode: bool,
+}
+
+impl Default for PtySystemOptions {
+    fn default() -> Self {
+        Self { raw_mode: false }
+    }
 }
 
 #[async_trait]
@@ -36,7 +46,10 @@ pub trait PtySystem {
     type MasterRead: AsyncRead;
     type MasterWrite: AsyncWrite;
 
-    fn spawn(command: std::process::Command) -> Result<PtySystemInstance<Self>, PtySystemError>;
+    fn spawn(
+        command: tokio::process::Command,
+        options: PtySystemOptions,
+    ) -> Result<PtySystemInstance<Self>, PtySystemError>;
 }
 
 pub struct PtySystemInstance<P>

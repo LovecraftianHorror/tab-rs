@@ -1,12 +1,14 @@
+use log::info;
 use std::{
     ffi::{CStr, OsStr},
     fs::{File, OpenOptions},
-    io,
-    os::unix::prelude::{FromRawFd, OsStrExt, RawFd},
+    io::{self, Read, Write},
+    os::unix::prelude::{AsRawFd, FromRawFd, OsStrExt, RawFd},
     pin::Pin,
-    task::{Context, Poll},
+    task::Poll,
 };
-use tokio::io::{unix::AsyncFd, AsyncRead, AsyncWrite};
+use tokio::io::{unix::AsyncFd, AsyncRead, AsyncWrite, ReadBuf};
+
 pub struct UnixInternal {
     handle: AsyncFd<File>,
 }
@@ -64,9 +66,9 @@ impl UnixInternal {
     /// Open a pseudo-TTY slave that is connected to this master.
     ///
     /// The resulting file handle is *not* set to non-blocking mode.
-    async fn open_sync_pty_slave(&self) -> Result<File, io::Error> {
+    pub fn open_sync_pty_slave(&self) -> Result<File, io::Error> {
         let mut buf: [libc::c_char; 512] = [0; 512];
-        let fd = self.as_raw_fd();
+        let fd = self.handle.as_raw_fd();
 
         #[cfg(not(any(target_os = "macos", target_os = "freebsd")))]
         {
@@ -87,8 +89,8 @@ impl UnixInternal {
         OpenOptions::new().read(true).write(true).open(ptsname)
     }
 
-    pub async fn winsize(&self) -> std::io::Result<(u16, u16)> {
-        let fd = self.as_raw_fd();
+    pub fn winsize(&self) -> std::io::Result<(u16, u16)> {
+        let fd = self.handle.as_raw_fd();
         let mut winsz: libc::winsize = unsafe { std::mem::zeroed() };
 
         if unsafe { libc::ioctl(fd, libc::TIOCGWINSZ.into(), &mut winsz) } != 0 {
@@ -98,8 +100,8 @@ impl UnixInternal {
         Ok((winsz.ws_col, winsz.ws_row))
     }
 
-    pub async fn resize(&self, cols: u16, rows: u16) -> io::Result<()> {
-        let fd = self.as_raw_fd();
+    pub fn resize(&self, cols: u16, rows: u16) -> io::Result<()> {
+        let fd = self.handle.as_raw_fd();
 
         let winsz = libc::winsize {
             ws_row: rows,
@@ -114,47 +116,83 @@ impl UnixInternal {
 
         Ok(())
     }
+}
 
-    pub(crate) fn poll_read_priv(
-        &self,
-        cx: &mut Context<'_>,
-        buf: &mut [u8],
-    ) -> Poll<io::Result<()>> {
-        // Safety: `TcpStream::read` correctly handles reads into uninitialized memory
-        unsafe { self.evented.x }
+impl AsRawFd for UnixInternal {
+    fn as_raw_fd(&self) -> RawFd {
+        self.handle.as_raw_fd()
     }
 }
 
 impl AsyncRead for UnixInternal {
     fn poll_read(
-        mut self: std::pin::Pin<&mut Self>,
+        self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
-        buf: &mut [u8],
-    ) -> std::task::Poll<io::Result<usize>> {
-        AsyncRead::poll_read(Pin::new(&mut self.evented), cx, buf)
+        buf: &mut ReadBuf<'_>,
+    ) -> std::task::Poll<io::Result<()>> {
+        info!("Try read...");
+        loop {
+            let mut guard = match self.handle.poll_read_ready(cx)? {
+                Poll::Ready(guard) => guard,
+                Poll::Pending => return Poll::Pending,
+            };
+
+            match guard.try_io(|inner| inner.get_ref().read(buf.initialize_unfilled())) {
+                Ok(Ok(bytes)) => {
+                    info!("Read {} bytes", bytes);
+                    buf.advance(bytes);
+                    return Poll::Ready(Ok(()));
+                }
+                Ok(Err(err)) => {
+                    return Poll::Ready(Err(err));
+                }
+                Err(_would_block) => continue,
+            }
+        }
     }
 }
 
 impl AsyncWrite for UnixInternal {
     fn poll_write(
-        mut self: Pin<&mut Self>,
+        self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
         buf: &[u8],
     ) -> std::task::Poll<Result<usize, io::Error>> {
-        AsyncWrite::poll_write(Pin::new(&mut self.evented), cx, buf)
+        loop {
+            let mut guard = match self.handle.poll_write_ready(cx)? {
+                Poll::Ready(guard) => guard,
+                Poll::Pending => return Poll::Pending,
+            };
+
+            match guard.try_io(|inner| inner.get_ref().write(buf)) {
+                Ok(result) => return Poll::Ready(result),
+                Err(_would_block) => continue,
+            }
+        }
     }
 
     fn poll_flush(
-        mut self: Pin<&mut Self>,
+        self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), io::Error>> {
-        AsyncWrite::poll_flush(Pin::new(&mut self.evented), cx)
+        loop {
+            let mut guard = match self.handle.poll_write_ready(cx)? {
+                Poll::Ready(guard) => guard,
+                Poll::Pending => return Poll::Pending,
+            };
+
+            match guard.try_io(|inner| inner.get_ref().flush()) {
+                Ok(result) => return Poll::Ready(result),
+                Err(_would_block) => continue,
+            }
+        }
     }
 
     fn poll_shutdown(
-        mut self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
+        self: Pin<&mut Self>,
+        _cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), io::Error>> {
-        AsyncWrite::poll_shutdown(Pin::new(&mut self.evented), cx)
+        // self.handle.get_ref().sync_all().into()
+        Poll::Ready(Ok(()))
     }
 }

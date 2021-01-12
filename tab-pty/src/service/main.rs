@@ -3,6 +3,7 @@ use crate::{message::pty::MainShutdown, prelude::*};
 use super::client::ClientService;
 use lifeline::dyn_bus::DynBus;
 
+use postage::Sink;
 use tab_api::config::data_path;
 use tab_websocket::{
     bus::{WebsocketCarrier, WebsocketConnectionBus},

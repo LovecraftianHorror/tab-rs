@@ -1,6 +1,6 @@
 use lifeline::Receiver;
+use postage::{watch, Stream};
 use thiserror::Error;
-use tokio::sync::watch;
 
 #[derive(Error, Debug)]
 #[error("state never resolved to a value")]

@@ -26,12 +26,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ee67c11feeac938fae061b232e38e0b6d94f97a9df10e6271319325ac4c56a86"
 
 [[package]]
-name = "arc-swap"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dabe5a181f83789739c194cbe5a897dde195078fac08568d09221fd6137a7ba8"
-
-[[package]]
 name = "arrayref"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -75,30 +69,25 @@ dependencies = [
 
 [[package]]
 name = "async-tungstenite"
-version = "0.8.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5c45a0dd44b7e6533ac4e7acc38ead1a3b39885f5bbb738140d30ea528abc7c"
+checksum = "e00550829ef8e2c4115250d0ee43305649b0fa95f78a32ce5b07da0b73d95c5c"
 dependencies = [
  "futures-io",
  "futures-util",
  "log",
- "pin-project 0.4.27",
- "tokio 0.2.24",
+ "pin-project-lite 0.2.0",
+ "tokio 1.0.1",
  "tungstenite",
 ]
 
 [[package]]
-name = "async-tungstenite"
-version = "0.10.0"
+name = "atomic"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39eca8dd578b18e557361e50ca767df55c5e62f690a5e53868c3c7a8123145b7"
+checksum = "c3410529e8288c463bedb5930f82833bc0c90e5d2fe639a56582a4d09220b281"
 dependencies = [
- "futures-io",
- "futures-util",
- "log",
- "pin-project 1.0.2",
- "tokio 0.3.6",
- "tungstenite",
+ "autocfg",
 ]
 
 [[package]]
@@ -117,12 +106,6 @@ name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
-
-[[package]]
-name = "base64"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
 name = "base64"
@@ -190,9 +173,9 @@ checksum = "0e4cec68f03f32e44924783795810fa50a7035d8c8ebe78580ad7e6c703fba38"
 
 [[package]]
 name = "bytes"
-version = "0.6.0"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0dcbc35f504eb6fc275a6d20e4ebcda18cf50d40ba6fabff8c711fa16cb3b16"
+checksum = "ad1f8e949d755f9d79112b5bb46938e0ef9d3804a0b16dfab13aafcaa5f0fa72"
 
 [[package]]
 name = "cfg-if"
@@ -328,6 +311,16 @@ dependencies = [
  "lazy_static",
  "memoffset",
  "scopeguard",
+]
+
+[[package]]
+name = "crossbeam-queue"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f6cb3c7f5b8e51bc3ebb73a2327ad4abdbd119dc13223f14f961d2f38486756"
+dependencies = [
+ "cfg-if 1.0.0",
+ "crossbeam-utils",
 ]
 
 [[package]]
@@ -688,11 +681,11 @@ dependencies = [
 
 [[package]]
 name = "input_buffer"
-version = "0.3.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19a8a95243d5a0398cae618ec29477c6e3cb631152be5c19481f80bc71559754"
+checksum = "f97967975f448f1a7ddb12b0bc41069d09ed6a1c161a92687e057325db35d413"
 dependencies = [
- "bytes 0.5.6",
+ "bytes 1.0.0",
 ]
 
 [[package]]
@@ -757,19 +750,19 @@ checksum = "1482821306169ec4d07f6aca392a4681f66c75c9918aa49641a2595db64053cb"
 
 [[package]]
 name = "lifeline"
-version = "0.4.0"
-source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-tokio-0.3#35d4bf79551e4a09cae4017057f975928a6c2081"
+version = "0.5.0"
+source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-postage#7eb3dc7f3b92da8e8bcc43f01d5e0b2a9b07d58a"
 dependencies = [
  "anyhow",
- "arc-swap",
  "async-trait",
  "futures-util",
- "lockfree",
  "log",
  "pin-project 0.4.27",
+ "postage",
  "regex",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
+ "tokio-stream",
 ]
 
 [[package]]
@@ -785,15 +778,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd96ffd135b2fd7b973ac026d28085defbe8983df057ced3eb4f2130b0831312"
 dependencies = [
  "scopeguard",
-]
-
-[[package]]
-name = "lockfree"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74ee94b5ad113c7cb98c5a040f783d0952ee4fe100993881d1673c2cb002dd23"
-dependencies = [
- "owned-alloc",
 ]
 
 [[package]]
@@ -966,12 +950,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "owned-alloc"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30fceb411f9a12ff9222c5f824026be368ff15dc2f13468d850c7d3f502205d6"
-
-[[package]]
 name = "parking_lot"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1068,6 +1046,20 @@ name = "pin-utils"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+
+[[package]]
+name = "postage"
+version = "0.1.0"
+source = "git+https://github.com/austinjones/postage-rs.git?branch=main#4ae528bc97ff6dd8246269a2b4775d8a267a1f38"
+dependencies = [
+ "atomic",
+ "crossbeam-queue",
+ "futures-task",
+ "log",
+ "pin-project 1.0.2",
+ "static_assertions",
+ "thiserror",
+]
 
 [[package]]
 name = "ppv-lite86"
@@ -1299,7 +1291,7 @@ version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b18820d944b33caa75a71378964ac46f58517c92b6ae5f762636247c09e78fb"
 dependencies = [
- "base64 0.13.0",
+ "base64",
  "blake2b_simd",
  "constant_time_eq",
  "crossbeam-utils",
@@ -1467,6 +1459,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
 name = "strip-ansi-escapes"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1519,6 +1517,7 @@ dependencies = [
  "insta",
  "lifeline",
  "log",
+ "postage",
  "simplelog 0.8.0",
  "snailquote",
  "strip-ansi-escapes",
@@ -1527,7 +1526,7 @@ dependencies = [
  "tab-daemon 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-pty 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tempfile",
- "tokio 0.3.6",
+ "tokio 1.0.1",
  "tokio-test",
  "toml_edit",
  "which",
@@ -1541,12 +1540,13 @@ dependencies = [
  "dirs",
  "lifeline",
  "log",
+ "postage",
  "serde",
  "serde_yaml",
  "snailquote",
  "sysinfo",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
 ]
 
 [[package]]
@@ -1580,6 +1580,7 @@ dependencies = [
  "lifeline",
  "log",
  "maplit",
+ "postage",
  "pretty_assertions",
  "semver",
  "serde",
@@ -1588,7 +1589,7 @@ dependencies = [
  "tab-api 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
  "tokio-test",
  "typed-builder",
 ]
@@ -1623,20 +1624,21 @@ version = "0.5.4"
 dependencies = [
  "anyhow",
  "async-trait",
- "async-tungstenite 0.8.0",
- "base64 0.13.0",
+ "async-tungstenite",
+ "base64",
  "dirs",
  "http",
  "lifeline",
  "log",
  "log-panics",
+ "postage",
  "rand 0.8.0",
  "serde_yaml",
  "simplelog 0.9.0",
  "tab-api 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
  "tokio-io",
  "tokio-test",
  "tungstenite",
@@ -1671,13 +1673,14 @@ version = "0.5.3"
 dependencies = [
  "anyhow",
  "async-trait",
- "base64 0.13.0",
+ "base64",
  "bincode",
  "dirs",
  "futures 0.3.8",
  "lifeline",
  "log",
  "log-panics",
+ "postage",
  "rand 0.8.0",
  "serde_yaml",
  "simplelog 0.9.0",
@@ -1711,7 +1714,7 @@ dependencies = [
  "tab-pty-process 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tab-websocket 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
  "tokio-io",
 ]
 
@@ -1723,9 +1726,10 @@ dependencies = [
  "bytes 0.4.12",
  "errno",
  "libc",
+ "log",
  "mio 0.6.23",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
 ]
 
 [[package]]
@@ -1747,14 +1751,15 @@ name = "tab-websocket"
 version = "0.5.0"
 dependencies = [
  "anyhow",
- "async-tungstenite 0.10.0",
+ "async-tungstenite",
  "bincode",
  "futures 0.3.8",
  "lifeline",
  "log",
+ "postage",
  "serde",
  "thiserror",
- "tokio 0.3.6",
+ "tokio 1.0.1",
  "tokio-test",
  "tungstenite",
 ]
@@ -1892,22 +1897,18 @@ dependencies = [
  "bytes 0.5.6",
  "fnv",
  "futures-core",
- "iovec",
- "lazy_static",
- "mio 0.6.23",
  "pin-project-lite 0.1.11",
  "slab",
 ]
 
 [[package]]
 name = "tokio"
-version = "0.3.6"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "720ba21c25078711bf456d607987d95bce90f7c3bea5abe1db587862e7a1e87c"
+checksum = "d258221f566b6c803c7b4714abadc080172b272090cdc5e244a6d4dd13c3a6bd"
 dependencies = [
  "autocfg",
- "bytes 0.6.0",
- "futures-core",
+ "bytes 1.0.0",
  "libc",
  "memchr",
  "mio 0.7.7",
@@ -1915,7 +1916,6 @@ dependencies = [
  "once_cell",
  "pin-project-lite 0.2.0",
  "signal-hook-registry",
- "slab",
  "tokio-macros",
  "winapi 0.3.9",
 ]
@@ -1933,13 +1933,24 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "0.3.2"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46dfffa59fc3c8aad216ed61bdc2c263d2b9d87a9c8ac9de0c11a813e51b6db7"
+checksum = "42517d2975ca3114b22a16192634e8241dc5cc1f130be194645970cc1c371494"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tokio-stream"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e4cdeb73537e63f98adcd73138af75e3f368ccaecffaa29d7eb61b9f5a440457"
+dependencies = [
+ "futures-core",
+ "pin-project-lite 0.2.0",
+ "tokio 1.0.1",
 ]
 
 [[package]]
@@ -1972,18 +1983,18 @@ checksum = "a7f741b240f1a48843f9b8e0444fb55fb2a4ff67293b50a9179dfd5ea67f8d41"
 
 [[package]]
 name = "tungstenite"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0308d80d86700c5878b9ef6321f020f29b1bb9d5ff3cab25e75e23f3a492a23"
+checksum = "8ada8297e8d70872fa9a551d93250a9f407beb9f37ef86494eb20012a2ff7c24"
 dependencies = [
- "base64 0.12.3",
+ "base64",
  "byteorder",
- "bytes 0.5.6",
+ "bytes 1.0.0",
  "http",
  "httparse",
  "input_buffer",
  "log",
- "rand 0.7.3",
+ "rand 0.8.0",
  "sha-1",
  "url",
  "utf-8",

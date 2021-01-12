@@ -293,7 +293,7 @@ impl TestCommand {
                     .read_to_end(&mut stdout_buffer)
                     .await
                     .expect("failed to read stdout");
-                let code = child.await;
+                let code = child.wait().await;
                 code
             },
             10000

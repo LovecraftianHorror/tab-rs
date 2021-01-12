@@ -8,8 +8,8 @@ use crate::{
     log::get_level_str,
 };
 use anyhow::Context;
-use lifeline::prelude::*;
 use log::*;
+use postage::Stream;
 use std::{
     process::Stdio,
     time::{Duration, Instant},
@@ -107,7 +107,7 @@ pub fn launch_pty() -> anyhow::Result<()> {
 /// Waits for either a ctrl-c signal, or a message on the given channel.
 ///
 /// Useful in main() functions.
-pub async fn wait_for_shutdown<T: Default>(mut receiver: impl Receiver<T>) -> T {
+pub async fn wait_for_shutdown<T: Default>(mut receiver: impl Stream<Item = T> + Unpin) -> T {
     loop {
         select! {
             _ = ctrl_c() => {

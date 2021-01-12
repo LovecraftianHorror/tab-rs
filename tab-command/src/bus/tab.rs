@@ -18,10 +18,9 @@ use crate::{
 };
 use anyhow::Context;
 
-use tokio::{
-    sync::{mpsc, watch},
-    time,
-};
+use tokio::time;
+
+use postage::{mpsc, watch};
 
 lifeline_bus!(pub struct TabBus);
 

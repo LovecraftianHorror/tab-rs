@@ -18,7 +18,7 @@ impl Service for MainCloseTabsService {
 
     fn spawn(bus: &Self::Bus) -> Self::Lifeline {
         let mut rx = bus.rx::<MainRecv>()?;
-        let mut rx_active = bus.rx::<Option<ActiveTabsState>>()?.into_inner();
+        let mut rx_active = bus.rx::<Option<ActiveTabsState>>()?;
 
         let mut tx_request = bus.tx::<Request>()?;
         let mut tx_shutdown = bus.tx::<MainShutdown>()?;
@@ -46,7 +46,7 @@ impl MainCloseTabsService {
     async fn close_tabs(
         tabs: Vec<String>,
         state: ActiveTabsState,
-        tx_websocket: &mut impl Sender<Request>,
+        mut tx_websocket: impl Sink<Item = Request> + Unpin,
     ) -> anyhow::Result<i32> {
         if tabs.is_empty() {
             if let Ok(tab) = std::env::var("TAB_ID") {

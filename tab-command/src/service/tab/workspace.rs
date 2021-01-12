@@ -7,7 +7,6 @@ use crate::{
     state::workspace::WorkspaceState,
     state::{tab::TabMetadataState, workspace::WorkspaceTab},
 };
-use lifeline::ReceiverExt;
 use lifeline::Service;
 
 use self::loader::{scan_config, WorkspaceTabs};
@@ -21,6 +20,7 @@ pub struct WorkspaceService {
     _scan: Lifeline,
 }
 
+#[derive(Debug)]
 enum Event {
     ScanWorkspace,
     MetadataState(TabMetadataState),
@@ -53,7 +53,8 @@ impl Service for WorkspaceService {
         let mut rx = rx_scan
             .map(Event::scan)
             .merge(rx_active.map(Event::active))
-            .merge(rx_metadata.map(Event::metadata));
+            .merge(rx_metadata.map(Event::metadata))
+            .log(Level::Debug);
 
         let mut tx = bus.tx::<Option<WorkspaceState>>()?;
 
@@ -98,7 +99,7 @@ impl Service for WorkspaceService {
 
 impl WorkspaceService {
     async fn update(
-        tx: &mut impl Sender<Option<WorkspaceState>>,
+        mut tx: impl Sink<Item = Option<WorkspaceState>> + Unpin,
         active: Option<&ActiveTabsState>,
         current_dir: &Path,
     ) -> anyhow::Result<()> {
