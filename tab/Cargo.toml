@@ -38,7 +38,7 @@ which = "4.0"
 
 [dev-dependencies]
 lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
-postage = { git = "https://github.com/austinjones/postage-rs.git", branch = "main" }
+postage = "0.2.0"
 strip-ansi-escapes = "0.1.0"
 tokio-test = "0.2.1"
 tokio = { version = "1.0", features = ["process", "time", "rt-multi-thread"] } 

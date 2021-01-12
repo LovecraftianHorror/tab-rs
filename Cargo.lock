@@ -751,7 +751,7 @@ checksum = "1482821306169ec4d07f6aca392a4681f66c75c9918aa49641a2595db64053cb"
 [[package]]
 name = "lifeline"
 version = "0.5.0"
-source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-postage#7eb3dc7f3b92da8e8bcc43f01d5e0b2a9b07d58a"
+source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-postage#264e981240c080ff8b3e06a3e3efbdf3073ebfcf"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1049,8 +1049,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "postage"
-version = "0.1.0"
-source = "git+https://github.com/austinjones/postage-rs.git?branch=main#4ae528bc97ff6dd8246269a2b4775d8a267a1f38"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82a1a304c0447c17009e8da9710836ab2c49dae0025a55b0b176e1ac0167fa1c"
 dependencies = [
  "atomic",
  "crossbeam-queue",

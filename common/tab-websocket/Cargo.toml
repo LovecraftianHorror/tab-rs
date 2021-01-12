@@ -12,7 +12,7 @@ edition = "2018"
 
 [dependencies]
 lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
-postage = { git = "https://github.com/austinjones/postage-rs.git", branch = "main" }
+postage = "0.2.0"
 tungstenite = { version = "0.12", default-features = false }
 async-tungstenite = { version = "0.12", features = ["tokio-runtime"] }
 tokio = { version = "1.0", features = ["net", "macros", "sync", "signal"] }

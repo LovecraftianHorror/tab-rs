@@ -14,7 +14,7 @@ edition = "2018"
 tab-api = "0.5.3"
 tab-websocket = "0.5.0"
 lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
-postage = { git = "https://github.com/austinjones/postage-rs.git", branch = "main" }
+postage = "0.2.0"
 
 dirs = "3.0"
 serde_yaml = "0.8"
