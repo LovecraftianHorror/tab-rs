@@ -140,7 +140,7 @@ impl CarryFrom<ListenerBus> for PtyBus {
             let rx_id = self.rx::<PtyState>()?;
             let mut rx_pty = self.rx::<PtySend>()?.log(Level::Debug);
 
-            let mut tx_tab = from.tx::<TabSend>()?;
+            let mut tx_tab = from.tx::<TabSend>()?.log(Level::Debug);
             let mut tx_tab_manager = from.tx::<TabManagerRecv>()?;
 
             Self::try_task("to_listener", async move {
