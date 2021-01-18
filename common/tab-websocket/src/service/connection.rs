@@ -5,7 +5,7 @@ use crate::{
 };
 use lifeline::prelude::*;
 use log::{debug, info, Level};
-use postage::{Sink, Stream};
+use postage::{sink::Sink, stream::Stream};
 use tokio::select;
 
 use crate::common::{self, should_terminate};
@@ -153,7 +153,7 @@ mod test {
     };
     use lifeline::prelude::*;
     use lifeline::{assert_completes, dyn_bus::DynBus};
-    use postage::{Sink, Stream};
+    use postage::{sink::Sink, stream::Stream};
     use tungstenite::Message;
 
     #[tokio::test]

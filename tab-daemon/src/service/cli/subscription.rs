@@ -1,4 +1,4 @@
-use postage::Sink;
+use postage::sink::Sink;
 use tab_api::{chunk::OutputChunk, tab::TabId};
 
 use crate::{
@@ -178,7 +178,7 @@ mod tests {
         prelude::*, service::pty::scrollback::ScrollbackBuffer, state::pty::PtyScrollback,
     };
     use lifeline::{assert_completes, assert_times_out};
-    use postage::Sink;
+    use postage::sink::Sink;
     use tab_api::{chunk::OutputChunk, tab::TabId};
     use tokio::sync::Mutex;
 

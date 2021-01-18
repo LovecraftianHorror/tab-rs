@@ -2,7 +2,7 @@ use crate::{
     message::pty::{MainShutdown, PtyOptions, PtyRequest, PtyResponse, PtyShutdown},
     prelude::*,
 };
-use postage::{broadcast, mpsc, Sink, Stream};
+use postage::{broadcast, mpsc};
 use tab_api::pty::{PtyWebsocketRequest, PtyWebsocketResponse};
 
 lifeline_bus!(pub struct PtyBus);

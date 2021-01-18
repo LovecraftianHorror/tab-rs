@@ -7,7 +7,7 @@ use crate::{
     state::tab::TabsState,
 };
 use anyhow::Context;
-use postage::Sink;
+use postage::sink::Sink;
 
 use std::{
     collections::HashMap,

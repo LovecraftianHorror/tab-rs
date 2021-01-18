@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 use message::pty::MainShutdown;
-use postage::{Sink, Stream};
+use postage::{sink::Sink, stream::Stream};
 use simplelog::{CombinedLogger, TermLogger, TerminalMode, WriteLogger};
 use std::time::Duration;
 use tab_api::{config::pty_log, launch::*, log::get_level, pty::PtyWebsocketRequest};

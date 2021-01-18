@@ -9,7 +9,7 @@ use crate::{
 };
 use anyhow::Context;
 use log::*;
-use postage::Stream;
+use postage::stream::Stream;
 use std::{
     process::Stdio,
     time::{Duration, Instant},

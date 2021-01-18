@@ -7,7 +7,7 @@ use std::time::Duration;
 use crate::message::pty::{PtyRecv, PtySend, PtyShutdown};
 use crate::prelude::*;
 
-use postage::Sink;
+use postage::sink::Sink;
 use tab_api::pty::{PtyWebsocketRequest, PtyWebsocketResponse};
 
 use scrollback::PtyScrollbackService;

@@ -9,7 +9,7 @@ use crate::{
     state::tab::TabsState,
 };
 use anyhow::Context;
-use postage::{broadcast, mpsc, Sink, Stream};
+use postage::{broadcast, mpsc, sink::Sink, stream::Stream};
 use std::sync::Arc;
 use tab_api::{client::Request, client::Response};
 use tab_websocket::{bus::WebsocketMessageBus, resource::connection::WebsocketResource};

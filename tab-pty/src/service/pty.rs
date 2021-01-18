@@ -1,7 +1,7 @@
 use crate::message::pty::{PtyOptions, PtyRequest, PtyResponse, PtyShutdown};
 use crate::prelude::*;
 
-use postage::{barrier, Sink, Stream};
+use postage::barrier;
 use std::{process::Stdio, time::Duration};
 use tab_api::{
     chunk::{InputChunk, OutputChunk},

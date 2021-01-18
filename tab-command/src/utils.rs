@@ -1,5 +1,5 @@
 use lifeline::Receiver;
-use postage::{watch, Stream};
+use postage::{stream::Stream, watch};
 use thiserror::Error;
 
 #[derive(Error, Debug)]

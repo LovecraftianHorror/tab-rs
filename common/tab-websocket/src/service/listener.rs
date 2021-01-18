@@ -12,7 +12,7 @@ use log::{debug, error};
 
 use lifeline::prelude::*;
 use lifeline::{dyn_bus::DynBus, request::Request as LifelineRequest};
-use postage::Sink;
+use postage::sink::Sink;
 use tokio::net::TcpListener;
 
 /// An established listener service, which transmits WebsocketConnectionMessages over the listener bus.
@@ -107,7 +107,7 @@ mod tests {
         service::WebsocketService,
     };
     use lifeline::{assert_completes, dyn_bus::DynBus, prelude::*};
-    use postage::{Sink, Stream};
+    use postage::{sink::Sink, stream::Stream};
     use std::net::SocketAddr;
     use tokio::net::TcpListener;
 

@@ -3,7 +3,6 @@ use crate::prelude::*;
 
 use super::pty::PtyService;
 use lifeline::dyn_bus::DynBus;
-use postage::{Sink, Stream};
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
@@ -346,7 +345,7 @@ mod tests {
     use std::{collections::HashMap, time::Duration};
 
     use lifeline::{assert_completes, assert_times_out};
-    use postage::{Sink, Stream};
+    use postage::{sink::Sink, stream::Stream};
     use tab_api::{
         pty::{PtyWebsocketRequest, PtyWebsocketResponse},
         tab::TabId,
@@ -434,7 +433,7 @@ mod tests {
 #[cfg(test)]
 mod client_session_tests {
     use lifeline::{assert_completes, assert_times_out, dyn_bus::DynBus};
-    use postage::{Sink, Stream};
+    use postage::{sink::Sink, stream::Stream};
     use tab_api::{
         chunk::InputChunk, chunk::OutputChunk, pty::PtyWebsocketRequest, pty::PtyWebsocketResponse,
     };

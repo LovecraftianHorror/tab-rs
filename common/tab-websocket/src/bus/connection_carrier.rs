@@ -6,7 +6,7 @@ use crate::{
 use lifeline::{dyn_bus::DynBus, prelude::*};
 use log::*;
 use postage::{broadcast, mpsc};
-use postage::{Sink, Stream};
+use postage::{sink::Sink, stream::Stream};
 use serde::{de::DeserializeOwned, Serialize};
 
 /// Carries requests & responses between the websocket, and the attached bus (which must implement WebsocketMessageBus).

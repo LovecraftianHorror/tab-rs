@@ -5,7 +5,7 @@ use crate::message::cli::{
 use crate::prelude::*;
 use crate::state::tab::TabsState;
 use anyhow::Context;
-use postage::{Sink, Stream};
+use postage::{sink::Sink, stream::Stream};
 use tab_api::client::InitResponse;
 
 pub mod subscription;
