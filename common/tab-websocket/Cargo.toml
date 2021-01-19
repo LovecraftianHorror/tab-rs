@@ -24,4 +24,4 @@ serde = "1.0"
 log = "0.4"
 
 [dev-dependencies]
-tokio-test = "0.2.1"
+tokio-test = "0.4"
