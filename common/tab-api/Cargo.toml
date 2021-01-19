@@ -14,7 +14,7 @@ edition = "2018"
 lifeline = "0.6"
 postage = "0.3"
 tokio = { version = "1.0", features = ["macros", "process", "time"] }
-sysinfo = "0.15"
+sysinfo = { version = "0.15", default-features = false }
 dirs = "3.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.8"

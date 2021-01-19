@@ -30,9 +30,9 @@ anyhow = "1.0"
 log = "0.4"
 
 # used for install command
-tempfile = "3.1"
+tempfile = "3.2"
 dialoguer = "0.7"
-toml_edit = "0.2.0"
+toml_edit = "0.2"
 dirs = "3.0"
 which = "4.0"
 
