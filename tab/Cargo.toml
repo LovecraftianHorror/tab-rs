@@ -37,7 +37,7 @@ dirs = "3.0"
 which = "4.0"
 
 [dev-dependencies]
-lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
+lifeline = "0.6"
 postage = "0.3"
 strip-ansi-escapes = "0.1.0"
 tokio-test = "0.2.1"

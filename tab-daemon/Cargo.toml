@@ -13,7 +13,7 @@ edition = "2018"
 [dependencies]
 tab-api = "0.5.3"
 tab-websocket = "0.5.0"
-lifeline = { git = "https://github.com/austinjones/lifeline-rs.git", branch = "austinjones-postage" }
+lifeline = "0.6"
 postage = "0.3"
 
 dirs = "3.0"

@@ -750,8 +750,9 @@ checksum = "1482821306169ec4d07f6aca392a4681f66c75c9918aa49641a2595db64053cb"
 
 [[package]]
 name = "lifeline"
-version = "0.5.0"
-source = "git+https://github.com/austinjones/lifeline-rs.git?branch=austinjones-postage#e82625d5cc601b4633258e2af6001dc810a15446"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "412c179e899747e577a4e296547ff922443498172f0c052cfcb8146917ce2593"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -762,7 +763,6 @@ dependencies = [
  "regex",
  "thiserror",
  "tokio 1.0.1",
- "tokio-stream",
 ]
 
 [[package]]
@@ -1049,9 +1049,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "postage"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b34d66c19c3918e3bf994da5365702c2022dcf3c4ed9798ede69d37d0d10ce0"
+checksum = "ad1077635906689282ec56b7fc500a463115fe3b225501eada3b8bde2d36cad3"
 dependencies = [
  "atomic",
  "crossbeam-queue",
@@ -1940,17 +1940,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "tokio-stream"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4cdeb73537e63f98adcd73138af75e3f368ccaecffaa29d7eb61b9f5a440457"
-dependencies = [
- "futures-core",
- "pin-project-lite 0.2.0",
- "tokio 1.0.1",
 ]
 
 [[package]]
