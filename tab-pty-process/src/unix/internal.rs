@@ -130,7 +130,6 @@ impl AsyncRead for UnixInternal {
         cx: &mut std::task::Context<'_>,
         buf: &mut ReadBuf<'_>,
     ) -> std::task::Poll<io::Result<()>> {
-        info!("Try read...");
         loop {
             let mut guard = match self.handle.poll_read_ready(cx)? {
                 Poll::Ready(guard) => guard,
@@ -139,7 +138,6 @@ impl AsyncRead for UnixInternal {
 
             match guard.try_io(|inner| inner.get_ref().read(buf.initialize_unfilled())) {
                 Ok(Ok(bytes)) => {
-                    info!("Read {} bytes", bytes);
                     buf.advance(bytes);
                     return Poll::Ready(Ok(()));
                 }
