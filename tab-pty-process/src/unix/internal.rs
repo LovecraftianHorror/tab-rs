@@ -1,4 +1,3 @@
-use log::info;
 use std::{
     ffi::{CStr, OsStr},
     fs::{File, OpenOptions},
